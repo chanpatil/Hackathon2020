@@ -32,30 +32,33 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 path = os.getcwd()
 # file Upload
 UPLOAD_FOLDER = os.path.join(path, 'uploads/train')
+DFProfile_FOLDER = os.path.join(path, 'uploads/DFProfile')
 
 # Make directory if uploads is not exists
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
+if not os.path.isdir(DFProfile_FOLDER):
+    os.mkdir(DFProfile_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['DFProfile_FOLDER'] = DFProfile_FOLDER
+
 
 # Allowed extension you can set your own
 ALLOWED_EXTENSIONS = set(["csv","xlsx"])
 
 ###############################################################################
-
+# Check the file is having proper extension or not
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+
+###############################################################################
 
 @app.route("/")
 def hello():
     return render_template('index.html')
-
-"""
-@app.route("/home")
-def home():
-    return render_template('index.html')
-"""
 
 
 @app.route('/upload_files', methods=['POST'])
@@ -76,71 +79,70 @@ def upload_files():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         flash('File(s) successfully uploaded')
-        time.sleep(5)
-        """
-        intermediate = """""""
-        <div class="container container-fluid">
-   <div class="panel panel-default">
-      <div class="panel-heading text-center">
-         <h3 class="panel-title"><strong>Exploratory Data Analysis</strong></h3>
-      </div>
-      <div class="panel-body">
-         <div class="row">
-            <div class="col-md-12">
-        
-        <div class="col-md-8">
-                  <form action = "/home" method = "POST" enctype="multipart/form-data">
-                     <p allign="Center"> File Upload Successfull !!! </p>
-                     <br>
-                     <input type = "submit" style="width: 60%;" value="Upload 3 Files" class="btn-xclg btn btn-primary"/>
-                  </form>
-               </div>
-
-            </div>
-         </div>
-      </div>
-   </div>
-</div>
-               """
+        time.sleep(3)
 
         return render_template("index.html")
 
-
-
-
 @app.route('/data_profiling', methods = ['GET', 'POST'])
 def data_profiling():
-    mypath = "results/"
-    for root, dirs, files in os.walk(mypath):
-        for file in files:
-            os.remove(os.path.join(root, file))
+    if request.method == 'POST':
 
-    datasetprofile = pd.read_excel(request.files.get('file'))
-    profile = datasetprofile.profile_report(title='Data Profiling Report')
-    profile.to_file(output_file="results/DFReport.html")
-    return render_template("results/DFReport.html")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        if os.path.exists("templates/DFReport.html"):
+            os.remove("templates/DFReport.html")
+        
+        mypath = "uploads/DFProfile"
+        for root, dirs, files in os.walk(mypath):
+            for file in files:
+                os.remove(os.path.join(root, file))
+        f = request.files['file']
+        f.save(os.path.join(app.config['DFProfile_FOLDER'], f.filename))
+        
+        filename = None
+        for root, dirs, files in os.walk(mypath):
+            for file in files:
+                filename = file
+        
+        # #return render_template("results/DFReport.html")
+        print("File Name",filename)
+        
+        path = mypath + "/" +filename
+        print("Path:",path)
+        if ".csv" in filename:
+            datasetprofile = pd.read_csv(path)
+            profile = datasetprofile.profile_report(title='AiZen Data Profiling Report')
+            profile.to_file(output_file="templates/DFReport.html")
+        elif ".xlsx" in filename:
+            print("Excel FIle")
+            datasetprofile = pd.read_excel(path, sheet_name=0)
+            profile = datasetprofile.profile_report(title='AiZen Data Profiling Report')
+            profile.to_file(output_file="templates/DFReport.html")
             
+        return render_template("DFReport.html")
+     
+
+@app.route('/train_classifier', methods = ['GET', 'POST'])
+def train_classifier():
+    if request.method == 'POST':
+        
+        
+        
+        return "Work in Progress"
+
+@app.route('/train_regressor', methods = ['GET', 'POST'])
+def train_regressor():
+    if request.method == 'POST':
+        # Need to worki on the Creation of model
+        
+        return "Work in Progress"
+
+
+
+
 # run the application
 if __name__ == "__main__":
     app.run()
     
-    
-    
+
 """
 1>
             div1 = "<div style='font-size: 20px; font-weight: bold; color: blue; text-align: center; border-style: solid; border-color: black;'><img src='data:image/jpeg;base64,"+encoded_string1+"'/></div>"    
@@ -282,3 +284,29 @@ result = {
             
 
 """
+"""
+        intermediate = """""""
+        <div class="container container-fluid">
+   <div class="panel panel-default">
+      <div class="panel-heading text-center">
+         <h3 class="panel-title"><strong>Exploratory Data Analysis</strong></h3>
+      </div>
+      <div class="panel-body">
+         <div class="row">
+            <div class="col-md-12">
+        
+        <div class="col-md-8">
+                  <form action = "/home" method = "POST" enctype="multipart/form-data">
+                     <p allign="Center"> File Upload Successfull !!! </p>
+                     <br>
+                     <input type = "submit" style="width: 60%;" value="Upload 3 Files" class="btn-xclg btn btn-primary"/>
+                  </form>
+               </div>
+
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+               """
+               

@@ -77,8 +77,8 @@ background-image: :
                </div>
                
                 <div class="col-md-5">
-                  <form action = "{{ url_for('upload_files') }}" method = "POST" enctype="multipart/form-data">
-                     <input type = "file" name = "files[]" multiple="true" autocomplete="off" required/>
+                  <form action = "{{ url_for('data_profiling') }}" method = "POST" enctype="multipart/form-data">
+                     <input type = "file" name = "file" multiple="true" autocomplete="off" required/>
                      <br>
                      <input type = "submit" style="width: 60%;" value="Exploratory Data Analysis" class="btn-xclg btn btn-primary"/>
                   </form>
@@ -100,18 +100,14 @@ background-image: :
       <div class="col-md-12">
          
          <div class="col-md-5">
-            <form action = "{{ url_for('upload_files') }}" method = "POST" enctype="multipart/form-data">
-               <input type = "file" name = "file" />
-               <br>
-               <input type = "submit" value="Train Classification Model" class="btn-xclg btn btn-primary"/>
+            <form action = "{{ url_for('train_classifier') }}" method = "POST" enctype="multipart/form-data">
+               <input type = "submit" style="width: 60%;" value="Train Classification Model" class="btn-xclg btn btn-primary"/>
             </form>
          </div>
          
          <div class="col-md-5">
-            <form action = "{{ url_for('upload_files') }}" method = "POST" enctype="multipart/form-data">
-               <input type = "file" name = "file" />
-               <br>
-               <input type = "submit" value="Train Regression Model" class="btn-xclg btn btn-primary"/>
+            <form action = "{{ url_for('train_regressor') }}" method = "POST" enctype="multipart/form-data">
+               <input type = "submit" style="width: 60%;" value="Train Regression Model" class="btn-xclg btn btn-primary"/>
             </form>
          </div>
          
