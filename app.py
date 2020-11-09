@@ -143,6 +143,8 @@ if __name__ == "__main__":
     app.run()
     
 
+"""  ****************************************** Archive Code *************************************** """
+
 """
 1>
             div1 = "<div style='font-size: 20px; font-weight: bold; color: blue; text-align: center; border-style: solid; border-color: black;'><img src='data:image/jpeg;base64,"+encoded_string1+"'/></div>"    
