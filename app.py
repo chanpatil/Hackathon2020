@@ -17,6 +17,9 @@ import base64
 import time
 from pandas_profiling import ProfileReport
 
+import data_preprocessing as dp
+
+
 # creates a Flask application, named app
 app = Flask(__name__)
 Bootstrap(app)
@@ -124,16 +127,12 @@ def file_readers(training_path):
     if len(files) == 3:
         for filename in files:
             if ".csv" in filename:
-                print("1")
                 dataset = pd.read_csv(training_path +"/"+ filename)
             elif ".xlsx" in filename and filename=="Feature_Selected.xlsx":
-                print("2")
                 feature_selected = pd.read_excel(training_path +"/"+ filename , sheet_name=0)
             elif ".xlsx" in filename:
                 dataset = pd.read_excel(training_path +"/"+ filename , sheet_name=0)
-                print("3")
             elif ".json" in filename:
-                print("4")
                 with open(training_path + "/"+ filename) as f:
                     fearure_info = json.load(f)
 
@@ -147,13 +146,45 @@ def train_classifier():
     """
     This API enable the user to train the classifier model by utilising the file present
     in the folder "uploads/train".
+    dataset_dup = dp_dup.remove_duplicate_records(dataset)
+    dataset_nan = dp_nan.deal_with_nan(dataset_dup)
+    dataset_cat = dp_cat.deal_with_categorical_data(dataset_nan)
+    dataset_out = dp_out.deal_with_outlier(dataset_cat)
+    dataset_scale = dp_scale.scale_feature(dataset_out)
+
     """
     if request.method == 'POST':
         training_path = "uploads/train"
-        dataset, feature_selected, fearure_info = file_readers(training_path)
+        dataset, feature_selected, feature_info = file_readers(training_path)
+        """
         print("Dataset",dataset.head(3))
         print("feature_selected",feature_selected)
         print("fearure_info",fearure_info)
+        """
+
+        # Getting Important columns from Feature Selected.xlsx
+        selectedFeature = list(feature_selected[feature_selected["Required"] == True]["Feature Name"].values)
+        print("Feature Selected:", selectedFeature)
+
+        # Getting the feature information from Feature Info.json
+        ignore_cols = feature_info["ignore_cols"]
+        target_col = feature_info["target_col"]
+        print("\nIgnore Cols:", ignore_cols)
+        print("\nTarget Cols:", target_col)
+
+        # Dataset as per the client data
+        print("Before :Shape of Dataframe :", dataset.shape)
+        dataset_selected = dataset[selectedFeature].copy()
+        print("After :Shape of Dataframe after feature selection:", dataset_selected.shape)
+
+
+        # Will remove the duplicates in dataset
+        dataset_dup = dp.remove_duplicate_records(dataset_selected)
+        print(dataset_dup.shape)
+        # Will deal with NaN value in dataset
+        dataset_nan = dp.deal_with_nan(dataset_dup)
+        #print(dataset_nan.shape)
+
         return "Work in Progress"
   
     else:
@@ -168,9 +199,12 @@ def train_regressor():
         """
         training_path = "uploads/train"
         dataset, feature_selected, fearure_info = file_readers(training_path)
+        """
         print("Dataset",dataset.head(3))
         print("feature_selected",feature_selected)
         print("fearure_info",fearure_info)
+
+        """
         return "Work in Progress"
     else:
         return "Only POST Method is allowed."
