@@ -45,7 +45,7 @@ app.config['DFProfile_FOLDER'] = DFProfile_FOLDER
 
 
 # Allowed extension you can set your own
-ALLOWED_EXTENSIONS = set(["csv","xlsx"])
+ALLOWED_EXTENSIONS = set(["csv","xlsx","json"])
 
 ###############################################################################
 # Check the file is having proper extension or not
@@ -73,13 +73,12 @@ def upload_files():
             return redirect(request.url)
 
         files = request.files.getlist('files[]')
-
+        #print(len(files))
         for file in files:
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
+                print(filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        flash('File(s) successfully uploaded')
-        time.sleep(3)
 
         return render_template("index.html")
 
@@ -118,7 +117,6 @@ def data_profiling():
             profile.to_file(output_file="templates/DFReport.html")
             
         return render_template("DFReport.html")
-     
 
 @app.route('/train_classifier', methods = ['GET', 'POST'])
 def train_classifier():
@@ -142,8 +140,6 @@ def train_regressor():
 if __name__ == "__main__":
     app.run()
     
-
-"""  ****************************************** Archive Code *************************************** """
 
 """
 1>
