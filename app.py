@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import json
 import numpy as np
-from flask import jsonify 
+from flask import jsonify , send_from_directory, send_file
 from flask import Flask, render_template, request,url_for, flash, redirect, jsonify
 from werkzeug.utils import secure_filename
 from flask_bootstrap import Bootstrap
@@ -112,15 +112,16 @@ def data_profiling():
         if ".csv" in filename:
             datasetprofile = pd.read_csv(path)
             profile = datasetprofile.profile_report(title='AiZen Data Profiling Report')
-            profile.to_file(output_file="templates/DFReport.html")
+            profile.to_file(output_file="uploads/DFProfile/DFReport.html")
         elif ".xlsx" in filename:
             print("Excel FIle")
             datasetprofile = pd.read_excel(path, sheet_name=0)
             profile = datasetprofile.profile_report(title='AiZen Data Profiling Report')
-            profile.to_file(output_file="templates/DFReport.html")
+            profile.to_file(output_file="uploads/DFProfile/DFReport.html")
             
-        return render_template("DFReport.html")
-
+        #return render_template("DFReport.html")
+        #return send_file("uploads/DFProfile/DFReport.html", attachment_filename="DFReport.html")
+        return send_from_directory(mypath, "DFReport.html", as_attachment=True)
 
 def file_readers(training_path):
     path, dirs, files = next(os.walk(training_path))
