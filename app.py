@@ -89,8 +89,8 @@ def upload_files():
 def data_profiling():
     if request.method == 'POST':
 
-        if os.path.exists("templates/DFReport.html"):
-            os.remove("templates/DFReport.html")
+        if os.path.exists("uploads/DFProfile/DFReport.html"):
+            os.remove("uploads/DFProfile/DFReport.html")
         
         mypath = "uploads/DFProfile"
         for root, dirs, files in os.walk(mypath):
