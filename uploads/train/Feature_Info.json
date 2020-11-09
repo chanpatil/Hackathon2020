@@ -1,4 +1,4 @@
 {
-ignore_cols : ["customerID"],
-target_col : "Churn"
+"ignore_cols" : ["customerID"],
+"target_col" : "Churn"
 }

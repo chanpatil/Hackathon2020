@@ -120,11 +120,39 @@ def data_profiling():
 
 @app.route('/train_classifier', methods = ['GET', 'POST'])
 def train_classifier():
+    """
+    This API enable the user to train the classifier model by utilising the file present
+    in the folder "uploads/train".
+    """
     if request.method == 'POST':
-        
-        
-        
-        return "Work in Progress"
+        training_path = "uploads/train"
+        path, dirs, files = next(os.walk(training_path))
+        if len(files) == 3:
+            for filename in files:
+                if ".csv" in filename:
+                    print("1")
+                    dataset = pd.read_csv(training_path +"/"+ filename)
+                elif ".xlsx" in filename and filename=="Feature_Selected.xlsx":
+                    print("2")
+                    feature_selected = pd.read_excel(training_path +"/"+ filename , sheet_name=0)
+                elif ".xlsx" in filename:
+                    dataset = pd.read_excel(training_path +"/"+ filename , sheet_name=0)
+                    print("3")
+                elif ".json" in filename:
+                    print("4")
+                    with open(training_path + "/"+ filename) as f:
+                        fearure_info = json.load(f)
+
+            print("Dataset",dataset.head(3))
+            print("feature_selected",feature_selected)
+            print("fearure_info",fearure_info)
+
+
+            return "Work in Progress1"
+        else:
+            return "Please upload all 3 files."
+    else:
+        return "Only POST Method is allowed."
 
 @app.route('/train_regressor', methods = ['GET', 'POST'])
 def train_regressor():
