@@ -161,7 +161,12 @@ def train_regressor():
         
         return "Work in Progress"
 
-
+@app.route('/evaluate_model', methods = ['GET', 'POST'])
+def evaluate_model():
+    if request.method == 'POST':
+        # Need to worki on the Creation of model
+        
+        return "Work in Progress"
 
 
 # run the application
