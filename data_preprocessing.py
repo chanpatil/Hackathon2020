@@ -5,9 +5,11 @@ dataset_cat = dp_cat.deal_with_categorical_data(dataset_nan)
 dataset_out = dp_out.deal_with_outlier(dataset_cat)
 dataset_scale = dp_scale.scale_feature(dataset_out)
 """
+import pandas as pd
 import numpy as np
 from scipy import stats
 from sklearn.impute import SimpleImputer
+from sklearn_pandas import CategoricalImputer
 
 # ############################ Utility Functions ###########################
 def numerical_imputation(df_numeric, strategy):
@@ -27,10 +29,14 @@ def deal_numerical_data(df_numeric):
     else:
         strategy = "median"
 
-    print(strategy ,"is used for Imputation of numerical columms")
+    print(strategy ,"is a used for Imputation of numerical columms")
     df_imputed_numeric = numerical_imputation(df_numeric, strategy)
     return df_imputed_numeric
 
+def deal_categorical_data(df_category):
+    cat_imputer = CategoricalImputer()
+    cat_imputer.fit_transform(df_category)
+    return df_category
 
 # ######################## Parent Functions ########################
 
@@ -66,11 +72,30 @@ def deal_with_nan(dataset_dup):
     print(categorical_cols)
     print(time_series)
     """
+    print(dataset_dup.shape)
+    # Dealing with the Timeseries columns
+    if len(time_series) != 0:
+        dataset_dup.drop(time_series, axis=1)
 
-    df_numeric = dataset_dup[numerical_cols].copy()
-    df_imputed_numerics = deal_numerical_data(df_numeric)
-    print(df_imputed_numerics)
+    # Dealing with numeric Columns
+    if len(numerical_cols) != 0:
+        df_numeric = dataset_dup[numerical_cols].copy()
+        df_imputed_numerics = deal_numerical_data(df_numeric)
+        print(df_imputed_numerics)
+    
+    # Dealing with Categorical columns
+    if len(categorical_cols) != 0:
+        df_category = dataset_dup[categorical_cols].copy()
+        df_imputed_categorical = deal_categorical_data(df_category)
+        print(df_imputed_categorical)
 
+    # Merge numerical and categorical data
+    preprocessed_df = pd.concat([df_imputed_numerics, df_imputed_categorical], axis=1)
+    print(preprocessed_df)
+    print(preprocessed_df.shape)
+
+    # Dealing with Categorical Columns
+    
 
 
     print("******************************************************************")
