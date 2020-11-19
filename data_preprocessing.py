@@ -8,8 +8,8 @@ dataset_scale = dp_scale.scale_feature(dataset_out)
 import pandas as pd
 import numpy as np
 from scipy import stats
-from sklearn.impute import SimpleImputer
-from sklearn_pandas import CategoricalImputer
+#from sklearn.impute import SimpleImputer
+#from sklearn_pandas import CategoricalImputer
 
 # ############################ Utility Functions ###########################
 def numerical_imputation(df_numeric, strategy):

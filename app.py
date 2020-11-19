@@ -183,7 +183,7 @@ def train_classifier():
         dataset_dup = dp.remove_duplicate_records(dataset_selected)
         print(dataset_dup.shape)
         # Will deal with NaN value in dataset
-        dataset_nan = dp.deal_with_nan(dataset_dup)
+        # dataset_nan = dp.deal_with_nan(dataset_dup)
         #print(dataset_nan.shape)
 
         return "Work in Progress"
@@ -218,6 +218,12 @@ def evaluate_model():
         
         return "Work in Progress"
 
+@app.route('/refresh', methods = ['GET', 'POST'])
+def refresh():
+    if request.method == 'POST':
+        # Need to worki on the Creation of model
+        
+        return "Work in Progress"
 
 # run the application
 if __name__ == "__main__":
