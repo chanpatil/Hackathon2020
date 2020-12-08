@@ -15,7 +15,7 @@ def save_model(model):
     pickle.dump(model, open(path, 'wb'))
 
 
-def train_classification_model(final_data,selectedFeature, target_col ):
+def train_classification_model(dataset_scaled, final_data, target_col ):
     """
     Performing KFold Cross Validation and training the model
     """
@@ -27,8 +27,10 @@ def train_classification_model(final_data,selectedFeature, target_col ):
           verbose=0, warm_start=False)
 
     # evaluate model
-    X = final_data[selectedFeature]
+
+    X = dataset_scaled
     y = final_data[target_col]
+    
     scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1)
     # report performance
     print('Accuracy: %.3f (%.3f)' % (mean(scores), std(scores)))

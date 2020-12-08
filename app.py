@@ -202,11 +202,13 @@ def train_classifier():
 
         # Perform K-Fold Cross Validation for training.
 
-        df_result = mt.train_classification_model(final_data, selectedFeature, target_col)
+        print("*********************************************")
+        print(final_data.columns)
+        df_result = mt.train_classification_model(dataset_scaled, final_data, target_col)
 
+        result = "Training is completed and accuracy is = " + str(df_result)
         
-
-        return "Work in Progress"
+        return result
   
     else:
         return "Only POST Method is allowed."
