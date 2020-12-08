@@ -8,20 +8,21 @@ dataset_scale = dp_scale.scale_feature(dataset_out)
 import pandas as pd
 import numpy as np
 from scipy import stats
-#from sklearn.impute import SimpleImputer
-#from sklearn_pandas import CategoricalImputer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+
 
 # ############################ Utility Functions ###########################
-def numerical_imputation(df_numeric, strategy):
+def numerical_imputation(df_numeric, strategy, numerical_cols):
 
     imp = SimpleImputer(missing_values=np.nan, strategy=strategy)
-    imp.fit(df_numeric)
-    imp.transform(df_numeric)  
+    imp.fit(df_numeric[numerical_cols])
+    imp.transform(df_numeric[numerical_cols])  
 
     return df_numeric
 
-def deal_numerical_data(df_numeric):
-    shapiro_test = stats.shapiro(df_numeric)
+def deal_numerical_data(df_numeric, numerical_cols):
+    shapiro_test = stats.shapiro(df_numeric[numerical_cols])
     p_value = shapiro_test.pvalue
     print("Value",p_value)
     if p_value > 0.005:
@@ -30,12 +31,15 @@ def deal_numerical_data(df_numeric):
         strategy = "median"
 
     print(strategy ,"is a used for Imputation of numerical columms")
-    df_imputed_numeric = numerical_imputation(df_numeric, strategy)
+    df_imputed_numeric = numerical_imputation(df_numeric, strategy, numerical_cols)
     return df_imputed_numeric
 
-def deal_categorical_data(df_category):
-    cat_imputer = CategoricalImputer()
-    cat_imputer.fit_transform(df_category)
+def deal_categorical_data(df_category, categorical_cols):
+
+    df_category = pd.get_dummies(df_category[categorical_cols])
+    col_list = df_category.columns.tolist()
+    print("Category list:",col_list)
+
     return df_category
 
 # ######################## Parent Functions ########################
@@ -79,24 +83,30 @@ def deal_with_nan(dataset_dup):
 
     # Dealing with numeric Columns
     if len(numerical_cols) != 0:
-        df_numeric = dataset_dup[numerical_cols].copy()
-        df_imputed_numerics = deal_numerical_data(df_numeric)
-        print(df_imputed_numerics)
+        df_numeric = dataset_dup.copy()
+        df_nan = deal_numerical_data(df_numeric, numerical_cols)
+        #print("df_imputed_numerics:\n",df_imputed_numerics)
     
     # Dealing with Categorical columns
     if len(categorical_cols) != 0:
-        df_category = dataset_dup[categorical_cols].copy()
-        df_imputed_categorical = deal_categorical_data(df_category)
-        print(df_imputed_categorical)
 
-    # Merge numerical and categorical data
-    preprocessed_df = pd.concat([df_imputed_numerics, df_imputed_categorical], axis=1)
-    print(preprocessed_df)
-    print(preprocessed_df.shape)
+        df_category = df_nan.copy()
+        df_nan = deal_categorical_data(df_category, categorical_cols)
+        df_nan = df_nan.replace(np.nan, "NaN") 
+ 
+        #print("df_imputed_categorical:\n",df_imputed_categorical)
 
-    # Dealing with Categorical Columns
-    
+    return df_nan
 
 
-    print("******************************************************************")
-    return "Work in Progress"
+def feature_transformation(dataset_nan):
+    """
+    performs the feature transformation of dataset_nan
+    """
+
+    scaler = StandardScaler()
+    df_columns = dataset_nan.columns.to_list()
+    scaled_data = scaler.fit_transform(dataset_nan)
+    transformed_data = pd.DataFrame(scaled_data, columns = df_columns)
+    return transformed_data
+
