@@ -19,6 +19,7 @@ from pandas_profiling import ProfileReport
 
 import data_preprocessing as dp
 import model_train as mt
+import inference as inf
 
 # creates a Flask application, named app
 app = Flask(__name__)
@@ -35,6 +36,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 path = os.getcwd()
 # file Upload
 UPLOAD_FOLDER = os.path.join(path, 'uploads/train')
+TEST_FOLDER = os.path.join(path, 'uploads/test')
 DFProfile_FOLDER = os.path.join(path, 'uploads/DFProfile')
 
 # Make directory if uploads is not exists
@@ -44,6 +46,7 @@ if not os.path.isdir(DFProfile_FOLDER):
     os.mkdir(DFProfile_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config["TEST_FOLDER"] = TEST_FOLDER
 app.config['DFProfile_FOLDER'] = DFProfile_FOLDER
 
 
@@ -237,8 +240,56 @@ def train_regressor():
 def evaluate_model():
     if request.method == 'POST':
         # Need to worki on the Creation of model
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['TEST_FOLDER'], filename))
         
-        return "Work in Progress"
+        path, dirs, files = next(os.walk("uploads/test"))
+        print(len(files))
+        if len(files) == 1:
+            for filename in files:
+                path = "uploads/test" + "/" + filename
+                if "csv" in filename:
+                    test_data = pd.read_csv(path)
+                elif "xlsx" in filename:
+                    test_data = pd.read_excel(path)
+        
+        #print(test_data)
+        
+        training_path = "uploads/train"
+        dataset, feature_selected, feature_info = file_readers(training_path)
+       
+        # Getting Important columns from Feature Selected.xlsx
+        selectedFeature = list(feature_selected[feature_selected["Required"] == True]["Feature Name"].values)
+        test_data = test_data[selectedFeature]
+
+        # Will deal with NaN value in dataset
+        dataset_nan = dp.deal_with_nan(test_data)
+        #print(dataset_nan.shape)
+
+        # Need to scale the data
+        dataset_scaled = dp.feature_transformation(dataset_nan)
+        print("Scaled Dataset:\n",dataset_scaled)
+
+        # Performing the forecasting based on the saved model
+        result = inf.perform_classification(dataset_scaled)
+        
+        path = "results/"
+        filename = "AiZen_Predicted_value.xlsx"
+        filepath = path + filename
+        result.to_excel(filepath)
+
+        return send_from_directory(path, filename, as_attachment=True)
+
 
 @app.route('/refresh', methods = ['GET', 'POST'])
 def refresh():
