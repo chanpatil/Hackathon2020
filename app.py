@@ -91,7 +91,7 @@ def data_profiling():
 
         if os.path.exists("uploads/DFProfile/DFReport.html"):
             os.remove("uploads/DFProfile/DFReport.html")
-        
+        print("========================================")
         mypath = "uploads/DFProfile"
         for root, dirs, files in os.walk(mypath):
             for file in files:
