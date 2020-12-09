@@ -1,0 +1,4 @@
+{
+"ignore_cols" : ["Time"],
+"target_col" : "Class"
+}

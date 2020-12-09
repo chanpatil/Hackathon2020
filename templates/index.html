@@ -78,18 +78,30 @@ h1 {
     1px 25px 35px rgba(16,16,16,0.2),
     1px 30px 60px rgba(16,16,16,0.4);
 }
+ 
+.button1:{
+  position:absolute;
+  top=50px;
+
+}
+
    }
 
 </style>
 <h1>AIZEN - AI STRATIFICATION ENGINE</h1>
+<div class="button1" >
+	<form action = "{{ url_for('refresh') }}" method = "POST" enctype="multipart/form-data">
+	   <input type="image" src="static/restrt.PNG" onclick="restrt()" width="100" height="100"  class="btn pull-right"/>
+	</form>
+ </div>
  <div class="container">
       <img class="Logostyle" src= "/static/MOURITech.PNG" alt="www.MouriTech.com" >
 </div>
+
 <link rel="shortcut icon" href="">
 <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
 
-
-
+<p style="margin-left: 2.5em;padding: 0 7em 2em 0;">  </p>
 
 <div class="container container-fluid">
    <div class="panel panel-default">
@@ -163,16 +175,9 @@ h1 {
             <form action = "{{ url_for('evaluate_model') }}" method = "POST" enctype="multipart/form-data">
                <input type = "file" name = "file" />
                <br>
-               <input type = "submit" value="Perform Prediction" class="btn-xclg btn btn-primary"/>
+               <input type = "submit" style= " -ms-transform: translate(-50%, -50%);" value="Perform Prediction" class="btn-xclg btn btn-primary"/>
             </form>
          </div>
-
-         <div class="col-md-5" >
-            <form action = "{{ url_for('refresh') }}" method = "POST" enctype="multipart/form-data">
-               <input type = "submit" value="Engine Reboot" class="btn-xclg btn btn-primary"/>
-            </form>
-         </div>
-
       </div>
    </div>
     </div>
@@ -193,14 +198,14 @@ h1 {
    p.copyright {
    position: absolute;
    width: 100%;
-   line-height: 200px;
+   line-height: 400px;
    font-size: 1.0em;
    text-align: center;
    bottom:0;
    }
 </style>
 <footer>
-   <p class="copyright">All Right Reserved. MOURI Tech © 2020</p>
+   <p class="copyright">All Right Reserved. MOURI Tech © 2021</p>
 </footer>
 {% endblock %}
 {% block scripts %}
@@ -214,6 +219,11 @@ h1 {
 <script>
    function test() {
     alert("Files uploaded successful");
+   }
+</script>
+<script>
+   function restrt() {
+    alert("Refresh successful");
    }
 </script>
 {% endblock %}

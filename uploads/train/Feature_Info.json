@@ -1,4 +1,0 @@
-{
-"ignore_cols" : ["Time Series"],
-"target_col" : "Wings_P"
-}
