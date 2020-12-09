@@ -4,7 +4,7 @@ Created on Wed Nov  4 23:46:53 2020
 
 @author: Chanabasagoudap
 """
-import os
+import os, re, os.path
 import pandas as pd
 import json
 import numpy as np
@@ -17,6 +17,8 @@ import base64
 import time
 from pandas_profiling import ProfileReport
 
+
+# importing data science modules
 import data_preprocessing as dp
 import model_train as mt
 import inference as inf
@@ -291,11 +293,32 @@ def evaluate_model():
         return send_from_directory(path, filename, as_attachment=True)
 
 
+
+def house_cleaning(path):
+    for root, dirs, files in os.walk(path):
+                for file in files:
+                    os.remove(os.path.join(root, file))
+
 @app.route('/refresh', methods = ['GET', 'POST'])
 def refresh():
     if request.method == 'POST':
         # Need to worki on the Creation of model
         
+
+        DFProfie_path = "uploads/DFProfile"
+        Test_path = "uploads/test"
+        Train_path = "uploads/train"
+        result_path = "results/"
+        model_path = "model_config_file/"
+
+        house_cleaning(DFProfie_path)
+        house_cleaning(Test_path)
+        house_cleaning(Train_path)
+        house_cleaning(result_path)
+        house_cleaning(model_path)
+        
+
+
         return "Work in Progress"
 
 # run the application

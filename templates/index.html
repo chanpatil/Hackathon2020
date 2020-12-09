@@ -127,13 +127,21 @@ background-image: :
      <div class="row">
       <div class="col-md-12">
          
-         <div class="col-md-8" style="text-align:center;" >
+         <div class="col-md-5">
             <form action = "{{ url_for('evaluate_model') }}" method = "POST" enctype="multipart/form-data">
                <input type = "file" name = "file"  />
                <br>
                <input type = "submit" value="Perform Prediction" class="btn-xclg btn btn-primary"/>
             </form>
          </div>
+
+                  
+         <div class="col-md-5">
+            <form action = "{{ url_for('refresh') }}" method = "POST" enctype="multipart/form-data">
+               <input type = "submit" value="Engine Reboot" class="btn-xclg btn btn-primary"/>
+            </form>
+         </div>
+
          
       </div>
    </div>
