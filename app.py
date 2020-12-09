@@ -21,6 +21,7 @@ from pandas_profiling import ProfileReport
 # importing data science modules
 import data_preprocessing as dp
 import model_train as mt
+import model_train_reg as mt_r
 import inference as inf
 
 # creates a Flask application, named app
@@ -61,6 +62,10 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def house_cleaning(path):
+    for root, dirs, files in os.walk(path):
+                for file in files:
+                    os.remove(os.path.join(root, file))
 
 ###############################################################################
 
@@ -221,22 +226,58 @@ def train_classifier():
 @app.route('/train_regressor', methods = ['GET', 'POST'])
 def train_regressor():
     if request.method == 'POST':
-        """
-        This API enable the user to train the Regressor model by utilising the file present
-        in the folder "uploads/train".
-        """
         training_path = "uploads/train"
-        dataset, feature_selected, fearure_info = file_readers(training_path)
+        dataset, feature_selected, feature_info = file_readers(training_path)
         """
         print("Dataset",dataset.head(3))
         print("feature_selected",feature_selected)
         print("fearure_info",fearure_info)
-
         """
-        return "Work in Progress"
+       
+        # Getting Important columns from Feature Selected.xlsx
+        selectedFeature = list(feature_selected[feature_selected["Required"] == True]["Feature Name"].values)
+        print("Feature Selected:", selectedFeature)
+
+        # Getting the feature information from Feature Info.json
+        ignore_cols = feature_info["ignore_cols"]
+        target_col = feature_info["target_col"]
+        print("\nIgnore Cols:", ignore_cols)
+        print("\nTarget Cols:", target_col)
+
+        # Will remove the duplicates in dataset
+        dataset_dup = dp.remove_duplicate_records(dataset)
+
+         # Dataset as per the client data
+        print("Before :Shape of Dataframe :", dataset.shape)
+
+        # Taking the selected features only after removal of duplicates.
+        target_var = dataset_dup[target_col]
+        dataset_dup = dataset_dup[selectedFeature].copy()
+       
+        print("Length of target variable:",len(target_var))
+        print("After :Shape of Dataframe after feature selection:", dataset_dup.shape)
+
+
+        # Will deal with NaN value in dataset
+        dataset_nan = dp.deal_with_nan(dataset_dup)
+        #print(dataset_nan.shape)
+
+        # Need to scale the data
+        dataset_scaled = dp.feature_transformation(dataset_nan)
+        print("Scaled Dataset:\n",dataset_scaled)
+
+        # Now from here trainig starts
+        final_data = dataset_scaled.copy()
+        final_data[target_col] = target_var
+        
+        print("*********************************************")
+        print(final_data.columns)
+        df_result_1 = mt_r.train_regression_model(dataset_scaled, final_data, target_col)
+
+        result = "Training is completed and MAPE is = " + str(df_result_1) + " %"
+        return result
     else:
         return "Only POST Method is allowed."
-      
 
 @app.route('/evaluate_model', methods = ['GET', 'POST'])
 def evaluate_model():
@@ -294,16 +335,10 @@ def evaluate_model():
 
 
 
-def house_cleaning(path):
-    for root, dirs, files in os.walk(path):
-                for file in files:
-                    os.remove(os.path.join(root, file))
-
 @app.route('/refresh', methods = ['GET', 'POST'])
 def refresh():
     if request.method == 'POST':
         # Need to worki on the Creation of model
-        
 
         DFProfie_path = "uploads/DFProfile"
         Test_path = "uploads/test"
@@ -317,9 +352,8 @@ def refresh():
         house_cleaning(result_path)
         house_cleaning(model_path)
         
-
-
-        return "Work in Progress"
+        
+        return render_template('index.html')
 
 # run the application
 if __name__ == "__main__":

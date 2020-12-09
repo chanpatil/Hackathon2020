@@ -5,21 +5,30 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <style type="text/css">
    body{
+   background-image: url(https://image.freepik.com/free-vector/geometric-banner-with-connecting-lines-dots-design_1048-12490.jpg);
+   background-repeat: no-repeat;
+   background-size: cover;
+   background-color: #cccccc;;
    font:15px/1.5 Arial, Helvetica,sans-serif;
    }
+   .container-margin {
+    margin-top:30px !important;
+	border-color: red;
+    	
+}
    .spinner-1:before{
    content: "";
    box-sizing: border-box;
    position: absolute;
-   top:50%;
+   top:60%;
    left: 50%;
    height: 60px;
    width: 60px;
-   margin-top: -30px;
-   margin-left: -30px;
+   margin-top: 100px !important;
+   margin-left: 20px;
    border-radius: 50%;
    border:6px solid transparent;
-   border-top-color: #0091EA;
+   border-top-color: blue;
    animation: spinner 0.7s linear infinite;
    }
    @keyframes spinner {
@@ -37,21 +46,44 @@
     
 }
 .Logostyle
-{width:100% !important;
-height:280px !important;
+{width:40% !important;
+height:300px !important;
+display: block;
+margin-left: auto;
+margin-right: auto 
+
 
 }
-.headerstyle
-{
-background-image: :
+
+h1 {
+  font-size: 30px;
+  position:absolute;
+  top: 30px; 
+  left:1%;
+  color: #000080;
+  font-weight: bold;
+  transition: 0.5s; 
+  text-shadow: 1px 1px 1px #919191,
+        1px 2px 1px #919191,
+        1px 3px 1px #919191,
+        1px 4px 1px #919191,
+        1px 5px 1px #919191,
+        1px 6px 1px #919191,
+        1px 7px 1px #919191,
+        1px 8px 1px #919191,
+        1px 9px 1px #919191,
+        1px 10px 1px #919191,
+    1px 18px 6px rgba(16,16,16,0.4),
+    1px 22px 10px rgba(16,16,16,0.2),
+    1px 25px 35px rgba(16,16,16,0.2),
+    1px 30px 60px rgba(16,16,16,0.4);
 }
    }
 
 </style>
-<div class="container">
-
-      <img class="Logostyle" src="/static/Logo.jpg" alt="www.MouriTech.com">
-
+<h1>AIZEN - AI STRATIFICATION ENGINE</h1>
+ <div class="container">
+      <img class="Logostyle" src= "/static/MOURITech.PNG" alt="www.MouriTech.com" >
 </div>
 <link rel="shortcut icon" href="">
 <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
@@ -72,7 +104,7 @@ background-image: :
                   <form action = "{{ url_for('upload_files') }}" method = "POST" enctype="multipart/form-data">
                      <input type = "file" name = "files[]" multiple="true" autocomplete="off" required/>
                      <br>
-                     <input type = "submit" style="width: 60%;" value="Upload 3 Files" class="btn-xclg btn btn-primary"/>
+                     <input type = "submit" style="width: 60%;" value="Upload 3 Files" onclick="test()" class="btn-xclg btn btn-primary"/>
                   </form>
                </div>
                
@@ -129,20 +161,18 @@ background-image: :
          
          <div class="col-md-5">
             <form action = "{{ url_for('evaluate_model') }}" method = "POST" enctype="multipart/form-data">
-               <input type = "file" name = "file"  />
+               <input type = "file" name = "file" />
                <br>
                <input type = "submit" value="Perform Prediction" class="btn-xclg btn btn-primary"/>
             </form>
          </div>
 
-                  
-         <div class="col-md-5">
+         <div class="col-md-5" >
             <form action = "{{ url_for('refresh') }}" method = "POST" enctype="multipart/form-data">
                <input type = "submit" value="Engine Reboot" class="btn-xclg btn btn-primary"/>
             </form>
          </div>
 
-         
       </div>
    </div>
     </div>
@@ -170,7 +200,7 @@ background-image: :
    }
 </style>
 <footer>
-   <p class="copyright">All Right Reserved. MOURI Tech © 2019</p>
+   <p class="copyright">All Right Reserved. MOURI Tech © 2020</p>
 </footer>
 {% endblock %}
 {% block scripts %}
@@ -178,6 +208,12 @@ background-image: :
 <script>
    function myFunction() {
        document.getElementById("myForm").reset();
+   }
+</script>
+
+<script>
+   function test() {
+    alert("Files uploaded successful");
    }
 </script>
 {% endblock %}
